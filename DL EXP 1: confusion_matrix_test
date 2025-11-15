@@ -1,0 +1,107 @@
+# ----------------------------------------------------------
+#  CONFUSION MATRIX CONSTRUCTION (BINARY & MULTI-CLASS)
+#  WORKS IN GITHUB / COLAB / JUPYTER
+# ----------------------------------------------------------
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.datasets import load_iris, make_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+
+# ==========================================================
+#  PART 1: BI-LEVEL CONFUSION MATRIX (BINARY CLASSIFICATION)
+# ==========================================================
+
+print("\n========== BI-LEVEL (BINARY) CONFUSION MATRIX ==========\n")
+
+# Generate synthetic binary dataset
+X_bin, y_bin = make_classification(
+    n_samples=500,
+    n_features=10,
+    n_classes=2,
+    random_state=42
+)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X_bin, y_bin, test_size=0.3, random_state=42
+)
+
+# Train model
+model_bin = LogisticRegression()
+model_bin.fit(X_train, y_train)
+
+# Predict
+y_pred_bin = model_bin.predict(X_test)
+
+# Confusion Matrix
+cm_bin = confusion_matrix(y_test, y_pred_bin)
+
+# Display text output
+print("Binary Confusion Matrix:")
+print(cm_bin)
+
+# Plot Confusion Matrix
+disp_bin = ConfusionMatrixDisplay(confusion_matrix=cm_bin)
+disp_bin.plot(cmap="Blues")
+plt.title("Binary Confusion Matrix")
+plt.show()
+
+# Performance Metrics
+print("\nBinary Classification Metrics:")
+print("Accuracy :", accuracy_score(y_test, y_pred_bin))
+print("Precision:", precision_score(y_test, y_pred_bin))
+print("Recall   :", recall_score(y_test, y_pred_bin))
+print("F1 Score :", f1_score(y_test, y_pred_bin))
+
+# ==========================================================
+#  PART 2: MULTI-LEVEL CONFUSION MATRIX (MULTI-CLASS)
+# ==========================================================
+
+print("\n========== MULTI-LEVEL (MULTI-CLASS) CONFUSION MATRIX ==========\n")
+
+# Load multi-class dataset (Iris)
+iris = load_iris()
+X_multi = iris.data
+y_multi = iris.target
+
+# Split
+X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(
+    X_multi, y_multi, test_size=0.3, random_state=42
+)
+
+# Train model
+model_multi = RandomForestClassifier()
+model_multi.fit(X_train_m, y_train_m)
+
+# Predict
+y_pred_multi = model_multi.predict(X_test_m)
+
+# Confusion Matrix
+cm_multi = confusion_matrix(y_test_m, y_pred_multi)
+
+# Display text output
+print("Multi-class Confusion Matrix:")
+print(cm_multi)
+
+# Plot Confusion Matrix
+disp_multi = ConfusionMatrixDisplay(
+    confusion_matrix=cm_multi,
+    display_labels=iris.target_names
+)
+disp_multi.plot(cmap="Greens")
+plt.title("Multi-class Confusion Matrix")
+plt.show()
+
+# Performance Metrics
+print("\nMulti-class Classification Metrics:")
+print("Accuracy :", accuracy_score(y_test_m, y_pred_multi))
+print("Precision:", precision_score(y_test_m, y_pred_multi, average='macro'))
+print("Recall   :", recall_score(y_test_m, y_pred_multi, average='macro'))
+print("F1 Score :", f1_score(y_test_m, y_pred_multi, average='macro'))
+
+print("\nDONE ✔ Confusion Matrices Generated and Verified.")
